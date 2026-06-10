@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buscar letras de canciones</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Buscador de letras</h1>
+    <p>Busca letras por nombre y copia el texto con timestamps sin tener que seleccionarlo manualmente.</p>
+  </header>
+
+  <main>
+    <section class="section-card search-card">
+      <form id="searchForm" class="search-bar">
+        <label for="queryInput">Nombre de la canción o artista</label>
+        <input id="queryInput" name="query" type="search" placeholder="Azul, Shakira; X gon' give it to ya; Imagine" autocomplete="off" />
+        <label for="artistInput">Artista (opcional)</label>
+        <input id="artistInput" name="artist" type="text" placeholder="Introducir nombre del artista para refinar la búsqueda" autocomplete="off" />
+        <button type="submit">Buscar canciones</button>
+      </form>
+
+      <p id="message" class="message">Cargando interfaz...</p>
+
+      <ul id="resultsList" class="results-list" aria-live="polite"></ul>
+    </section>
+
+    <section class="section-card lyrics-card">
+      <div class="result-header">
+        <div>
+          <h2 id="lyricsTitle">Sin letra cargada</h2>
+          <p id="lyricsArtist" class="meta"></p>
+          <p id="lyricsSource" class="meta"></p>
+        </div>
+        <div class="actions">
+          <button id="copyButton" class="copy" type="button" disabled>Copiar letra con timestamps</button>
+          <button id="clearButton" class="clear" type="button">Reiniciar</button>
+        </div>
+      </div>
+
+      <pre id="lyricsBlock" class="pre-block">Busca una canción y haz clic en "Ver letra" para cargar la letra aquí.</pre>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>Busca por nombre de canción o artista. La copia usa un formato similar a <code>[00:02.02] Línea de letra</code>.</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
