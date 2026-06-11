@@ -1,44 +1,60 @@
 import { SEARCH_STORAGE_URL } from './constants.js';
 
-const STORAGE_KEY_PREFIX = 'search-count:';
-
 export async function recordSongSearch(song) {
+  if (!SEARCH_STORAGE_URL) {
+    throw new Error('SEARCH_STORAGE_URL no configurada.');
+  }
+
   const title = song.title?.trim() || '';
   const artist = song.artist?.trim() || '';
-  const key = `${STORAGE_KEY_PREFIX}${title.toLowerCase()}|${artist.toLowerCase()}`;
+  const titleLower = title.toLowerCase();
+  const artistLower = artist.toLowerCase();
+  const timestamp = new Date().toISOString();
 
-  let count = Number(localStorage.getItem(key) || 0) + 1;
-  localStorage.setItem(key, String(count));
-
-  if (!SEARCH_STORAGE_URL) {
-    return count;
+  const queryParams = new URLSearchParams({ titleLower, artistLower });
+  const searchUrl = `${SEARCH_STORAGE_URL}?${queryParams}`;
+  const response = await fetch(searchUrl);
+  if (!response.ok) {
+    throw new Error('No se pudo leer el archivo de búsqueda.');
   }
 
-  try {
-    const response = await fetch(SEARCH_STORAGE_URL, {
-      method: 'POST',
+  const existing = await response.json();
+  if (existing.length > 0) {
+    const record = existing[0];
+    const nextCount = (record.count || 0) + 1;
+    const patchResponse = await fetch(`${SEARCH_STORAGE_URL}/${record.id}`, {
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        title,
-        artist,
-        timestamp: new Date().toISOString(),
-        count
-      })
+      body: JSON.stringify({ count: nextCount, lastSearchedAt: timestamp })
     });
 
-    if (!response.ok) {
-      console.warn('No se pudo enviar la búsqueda al webhook de hoja de cálculo.', response.status);
-      return count;
+    if (!patchResponse.ok) {
+      throw new Error('No se pudo actualizar el conteo de búsqueda.');
     }
 
-    const data = await response.json().catch(() => null);
-    if (data?.count && Number(data.count) > count) {
-      count = Number(data.count);
-      localStorage.setItem(key, String(count));
-    }
-  } catch (error) {
-    console.warn('Error al enviar búsqueda al webhook de hoja de cálculo.', error);
+    return nextCount;
   }
 
-  return count;
+  const newRecord = {
+    title,
+    artist,
+    query: `${title}${artist ? ` - ${artist}` : ''}`.trim(),
+    titleLower,
+    artistLower,
+    count: 1,
+    lastSearchedAt: timestamp
+  };
+
+  const postResponse = await fetch(SEARCH_STORAGE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newRecord)
+  });
+
+  if (!postResponse.ok) {
+    throw new Error('No se pudo crear el registro de búsqueda.');
+  }
+
+  const created = await postResponse.json();
+  return created.count || 1;
 }

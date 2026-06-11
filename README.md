@@ -25,6 +25,7 @@ Then open `http://127.0.0.1:5500` in your browser.
 
 ```
 .
+│   db.json
 │   index.html
 │   LICENSE
 │   package.json
@@ -38,9 +39,11 @@ Then open `http://127.0.0.1:5500` in your browser.
 │       constants.js
 │       dom.js
 │       lyricsService.js
+│       searchStorage.js
 │       ui.js
 │       
 └───server
+        README.md
         requirements.txt
         ytmusic_server.py
 ```
