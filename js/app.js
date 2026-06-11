@@ -1,5 +1,6 @@
 import { searchForm, queryInput, artistInput, clearButton, copyButton } from './dom.js';
 import { searchSongs, getLyrics } from './lyricsService.js';
+import { recordSongSearch } from './searchStorage.js';
 import {
   renderSuggestions,
   showMessage,
@@ -23,6 +24,14 @@ searchForm.addEventListener('submit', async event => {
     return;
   }
 
+  let searchCountMessage = '';
+  try {
+    const count = await recordSongSearch({ title: query, artist: artistQuery });
+    searchCountMessage = ` Esta búsqueda se ha realizado ${count} vez${count === 1 ? '' : 'es'}.`;
+  } catch (err) {
+    console.warn('No se pudo registrar la búsqueda:', err);
+  }
+
   showMessage('Buscando canciones…');
   resetUiBeforeSearch();
   clearLyrics();
@@ -37,7 +46,7 @@ searchForm.addEventListener('submit', async event => {
 
         showLyrics(currentSong, lyrics, 'Original');
         resetUiAfterLoad();
-        showMessage(`Letra encontrada para "${query}" — mostrando opciones.`);
+        showMessage(`Letra encontrada para "${query}" — mostrando opciones.${searchCountMessage}`);
 
         // Aun así mostramos sugerencias para que el usuario pueda elegir otras versiones
         const suggestions = await searchSongs(combinedQuery);
@@ -52,12 +61,12 @@ searchForm.addEventListener('submit', async event => {
 
     const suggestions = await searchSongs(combinedQuery);
     if (suggestions.length === 0) {
-      showMessage('No se encontraron canciones con ese nombre. Prueba otra búsqueda.');
+      showMessage(`No se encontraron canciones con ese nombre. Prueba otra búsqueda.${searchCountMessage}`);
       return;
     }
 
     renderSuggestions(suggestions, loadLyrics);
-    showMessage(`Mostrando ${suggestions.length} resultados. Haz clic en "Ver letra".`);
+    showMessage(`Mostrando ${suggestions.length} resultados. Haz clic en "Ver letra".${searchCountMessage}`);
   } catch (error) {
     showMessage('Error al buscar canciones. Intenta más tarde.');
     console.error(error);
@@ -74,7 +83,7 @@ async function loadLyrics(song) {
 
     showLyrics(song, lyrics, 'Original');
     resetUiAfterLoad();
-    showMessage('Letra cargada. Usa el botón copiar para guardar la letra.');
+    showMessage('Letra cargada. Usa el botón copiar para guardar la letra en el portapapeles.');
   } catch (error) {
     currentLyrics = '';
     currentSong = null;

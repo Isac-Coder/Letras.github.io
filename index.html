@@ -15,14 +15,13 @@
   <main>
     <section class="section-card search-card">
       <form id="searchForm" class="search-bar">
-        <label for="queryInput">Nombre de la canción o artista</label>
+        <label for="queryInput">Nombre de la canción</label>
         <input id="queryInput" name="query" type="search" placeholder="Azul, Shakira; X gon' give it to ya; Imagine" autocomplete="off" />
         <label for="artistInput">Artista (opcional)</label>
         <input id="artistInput" name="artist" type="text" placeholder="Introducir nombre del artista para refinar la búsqueda" autocomplete="off" />
-        <button type="submit">Buscar canciones</button>
+        <button type="submit" class="BuscarC">Buscar canciones</button>
       </form>
 
-      <p id="message" class="message">Cargando interfaz...</p>
 
       <ul id="resultsList" class="results-list" aria-live="polite"></ul>
     </section>
@@ -39,6 +38,8 @@
           <button id="clearButton" class="clear" type="button">Reiniciar</button>
         </div>
       </div>
+
+      <p id="message" class="message">Cargando interfaz...</p>
 
       <pre id="lyricsBlock" class="pre-block">Busca una canción y haz clic en "Ver letra" para cargar la letra aquí.</pre>
 
