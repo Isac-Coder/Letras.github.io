@@ -24,54 +24,64 @@ searchForm.addEventListener('submit', async event => {
     return;
   }
 
-  let searchCountMessage = '';
-  try {
-    const count = await recordSongSearch({ title: query, artist: artistQuery });
-    searchCountMessage = ` Esta búsqueda se ha realizado ${count} vez${count === 1 ? '' : 'es'}.`;
-  } catch (err) {
-    console.warn('No se pudo registrar la búsqueda:', err);
-  }
-
   showMessage('Buscando canciones…');
   resetUiBeforeSearch();
   clearLyrics();
 
+  const recordPromise = recordSongSearch({ title: query, artist: artistQuery })
+    .catch(err => {
+      console.warn('No se pudo registrar la búsqueda:', err);
+      return null;
+    });
+
   try {
-    // Si se proporcionó artista, intentamos obtener la letra directamente primero
     if (artistQuery) {
-      try {
-        const lyrics = await getLyrics(artistQuery, query);
+      const suggestionsPromise = searchSongs(combinedQuery);
+      const lyricsPromise = getLyrics(artistQuery, query);
+
+      const [lyricsResult, suggestionsResult] = await Promise.allSettled([lyricsPromise, suggestionsPromise]);
+
+      const suggestions = suggestionsResult.status === 'fulfilled' ? suggestionsResult.value : [];
+      if (suggestions.length) {
+        renderSuggestions(suggestions, loadLyrics);
+      }
+
+      if (lyricsResult.status === 'fulfilled') {
+        const lyrics = lyricsResult.value;
         currentLyrics = lyrics;
         currentSong = { artist: artistQuery, title: query, titleShort: '', titleVersion: '' };
 
         showLyrics(currentSong, lyrics, 'Original');
         resetUiAfterLoad();
-        showMessage(`Letra encontrada para "${query}" — mostrando opciones.${searchCountMessage}`);
-
-        // Aun así mostramos sugerencias para que el usuario pueda elegir otras versiones
-        const suggestions = await searchSongs(combinedQuery);
-        if (suggestions.length) {
-          renderSuggestions(suggestions, loadLyrics);
-        }
+        showMessage(`Letra encontrada para "${query}" — mostrando opciones.${await getSearchCountMessage(recordPromise)}`);
         return;
-      } catch (err) {
-        // No se encontró letra con artista dado; continuamos con la búsqueda de sugerencias
+      }
+
+      if (suggestions.length) {
+        showMessage(`No se encontró la letra exacta, pero hay opciones relacionadas.${await getSearchCountMessage(recordPromise)}`);
+        return;
       }
     }
 
     const suggestions = await searchSongs(combinedQuery);
     if (suggestions.length === 0) {
-      showMessage(`No se encontraron canciones con ese nombre. Prueba otra búsqueda.${searchCountMessage}`);
+      showMessage(`No se encontraron canciones con ese nombre. Prueba otra búsqueda.${await getSearchCountMessage(recordPromise)}`);
       return;
     }
 
     renderSuggestions(suggestions, loadLyrics);
-    showMessage(`Mostrando ${suggestions.length} resultados. Haz clic en "Ver letra".${searchCountMessage}`);
+    showMessage(`Mostrando ${suggestions.length} resultados. Haz clic en "Ver letra".${await getSearchCountMessage(recordPromise)}`);
   } catch (error) {
     showMessage('Error al buscar canciones. Intenta más tarde.');
     console.error(error);
   }
 });
+
+async function getSearchCountMessage(recordPromise) {
+  const count = await recordPromise;
+  if (!count) return '';
+  return ` Esta búsqueda se ha realizado ${count} vez${count === 1 ? '' : 'es'}.`;
+}
 
 async function loadLyrics(song) {
   showMessage(`Cargando letra de "${song.title}"...`);
