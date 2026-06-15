@@ -2,7 +2,7 @@ import { SEARCH_STORAGE_URL } from './constants.js';
 
 export async function recordSongSearch(song) {
   if (!SEARCH_STORAGE_URL) {
-    return null;
+    throw new Error('SEARCH_STORAGE_URL no configurada.');
   }
 
   const title = song.title?.trim() || '';
