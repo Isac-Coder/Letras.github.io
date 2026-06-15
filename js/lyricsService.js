@@ -125,7 +125,10 @@ export async function getLyrics(artist, title, titleShort = '', titleVersion = '
       throw error;
     }));
 
-    const fallbackRequests = [getLyricsFromFallback(artist, title), getLyricsFromYtMusic(artist, title)];
+    const fallbackRequests = [getLyricsFromFallback(artist, title)];
+    if (YTMUSIC_SERVER_URL) {
+      fallbackRequests.push(getLyricsFromYtMusic(artist, title));
+    }
     const allRequests = [...candidateRequests, ...fallbackRequests];
 
     try {
