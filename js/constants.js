@@ -7,3 +7,4 @@ export const SUGGESTION_LIMIT = 8;
 export const REQUEST_TIMEOUT_MS = 10000;
 export const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos 
 export const MAX_LYRIC_CANDIDATES = 5;
+

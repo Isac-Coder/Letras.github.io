@@ -1,4 +1,4 @@
-YTMusic local lyrics server
+YTMusic local lyrics server 
 
 This optional small Flask server uses `ytmusicapi` to try and fetch lyrics from YouTube Music.
 

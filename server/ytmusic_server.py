@@ -9,6 +9,7 @@ CORS(app)
 
 yt = YTMusic()
 
+
 @app.route('/ytlyrics')
 def ytlyrics():
     artist = request.args.get('artist', '')

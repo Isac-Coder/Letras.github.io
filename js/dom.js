@@ -9,4 +9,3 @@ export const lyricsSource = document.getElementById('lyricsSource');
 export const lyricsBlock = document.getElementById('lyricsBlock');
 export const copyButton = document.getElementById('copyButton');
 export const clearButton = document.getElementById('clearButton');
- 

@@ -1,3 +1,4 @@
 Flask>=2.0
 ytmusicapi>=0.25.0
 # requests and flask-cors removed (translation proxy deleted)
+

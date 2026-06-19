@@ -18,6 +18,7 @@ export async function recordSongSearch(song) {
     throw new Error('No se pudo leer el archivo de búsqueda.');
   }
 
+  
   const existing = await response.json();
   if (existing.length > 0) {
     const record = existing[0];

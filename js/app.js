@@ -10,6 +10,7 @@ import {
   resetUiBeforeSearch
 } from './ui.js';
 
+
 let currentLyrics = '';
 let currentSong = null;
 

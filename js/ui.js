@@ -8,6 +8,7 @@ import {
   copyButton
 } from './dom.js';
 
+
 export function renderSuggestions(suggestions, onSelect) {
   resultsList.innerHTML = '';
   suggestions.forEach(song => {
