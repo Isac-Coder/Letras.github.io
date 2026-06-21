@@ -1,0 +1,96 @@
+/* UI state tokens and small helpers (imported by styles.css) */
+:root {
+  --color-loading: #1E90FF; /* blue */
+  --color-success: #2ECC71; /* green */
+  --color-no-results: #FFB74D; /* amber */
+  --color-error: #E24B4B; /* red */
+  --color-fallback: #9B59B6; /* purple */
+  --color-cached: #95A5A6; /* gray */
+  --color-offline: #7F8C8D; /* dark gray */
+
+  --transition-fast: 180ms;
+}
+
+/* State classes applied to the search card */
+.search-card.search-state--loading {
+  border-left: 6px solid var(--color-loading);
+}
+.search-card.search-state--success {
+  border-left: 6px solid var(--color-success);
+}
+.search-card.search-state--no-results {
+  border-left: 6px solid var(--color-no-results);
+}
+.search-card.search-state--error {
+  border-left: 6px solid var(--color-error);
+}
+.search-card.search-state--fallback {
+  border-left: 6px solid var(--color-fallback);
+}
+.search-card.search-state--cached {
+  border-left: 6px solid var(--color-cached);
+}
+
+/* Small top indicator bar */
+.search-status-indicator {
+  height: 4px;
+  width: 100%;
+  border-radius: 4px;
+  transition: background var(--transition-fast) ease;
+}
+.search-card.search-state--loading .search-status-indicator { background: var(--color-loading); }
+.search-card.search-state--success .search-status-indicator { background: var(--color-success); }
+.search-card.search-state--no-results .search-status-indicator { background: var(--color-no-results); }
+.search-card.search-state--error .search-status-indicator { background: var(--color-error); }
+.search-card.search-state--fallback .search-status-indicator { background: var(--color-fallback); }
+.search-card.search-state--cached .search-status-indicator { background: var(--color-cached); }
+
+/* Skeleton shimmer for list items */
+.skeleton {
+  display: block;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Provider badge variants */
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 600;
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+}
+.source-badge:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.source-badge::before { font-size: .85em; }
+
+.source-badge--lrclib { background: var(--color-fallback); }
+.source-badge--lrclib::before { content: '🎵'; }
+
+.source-badge--popcat { background: #2563eb; }
+.source-badge--popcat::before { content: '🐱'; }
+
+.source-badge--deezer { background: #ff5a5f; }
+.source-badge--deezer::before { content: '🎧'; }
+
+.source-badge--itunes { background: #1db954; }
+.source-badge--itunes::before { content: '🎙️'; }
+
+.source-badge--cached { background: var(--color-cached); color: #0b1220; }
+.source-badge--cached::before { content: '⚡'; }
+
+.source-badge--synced { background: #00d4ff; }
+.source-badge--synced::before { content: '🎬'; }
+
+/* Visual helpers */
+.visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px,1px,1px,1px); white-space: nowrap; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }

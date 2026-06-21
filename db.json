@@ -1,5 +1,125 @@
 {
   "searches": [
-  
-  ]
+    {
+      "title": "i was made for loving you",
+      "artist": "KISS",
+      "query": "i was made for loving you - KISS",
+      "titleLower": "i was made for loving you",
+      "artistLower": "kiss",
+      "count": 2,
+      "lastSearchedAt": "2026-06-21T17:29:41.761Z",
+      "id": "0iQC0vb4bZA"
+    },
+    {
+      "title": "i was made for lovin you",
+      "artist": "KISS",
+      "query": "i was made for lovin you - KISS",
+      "titleLower": "i was made for lovin you",
+      "artistLower": "kiss",
+      "count": 3,
+      "lastSearchedAt": "2026-06-21T20:34:45.322Z",
+      "id": "UD7C1NLaNL4"
+    },
+    {
+      "title": "i was made for lovin you",
+      "artist": "",
+      "query": "i was made for lovin you",
+      "titleLower": "i was made for lovin you",
+      "artistLower": "",
+      "count": 2,
+      "lastSearchedAt": "2026-06-21T20:26:06.380Z",
+      "id": "hXQheExpVW0"
+    },
+    {
+      "title": "you",
+      "artist": "Lloyd",
+      "query": "you - Lloyd",
+      "titleLower": "you",
+      "artistLower": "lloyd",
+      "count": 3,
+      "lastSearchedAt": "2026-06-21T21:00:51.478Z",
+      "id": "w2T2Rih6t5w"
+    },
+    {
+      "title": "baiana",
+      "artist": "",
+      "query": "baiana",
+      "titleLower": "baiana",
+      "artistLower": "",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T20:41:33.798Z",
+      "id": "bKuyL8cOOSI"
+    },
+    {
+      "title": "baianá",
+      "artist": "",
+      "query": "baianá",
+      "titleLower": "baianá",
+      "artistLower": "",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T20:54:17.868Z",
+      "id": "KZc7VELFK8M"
+    },
+    {
+      "title": "pajaro picon",
+      "artist": "niña emilia",
+      "query": "pajaro picon - niña emilia",
+      "titleLower": "pajaro picon",
+      "artistLower": "niña emilia",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:01:37.456Z",
+      "id": "Fsay8prEBuo"
+    },
+    {
+      "title": "mas de haí",
+      "artist": "top boy",
+      "query": "mas de haí - top boy",
+      "titleLower": "mas de haí",
+      "artistLower": "top boy",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:25:32.890Z",
+      "id": "D0qIg-_t2PY"
+    },
+    {
+      "title": "mas de ahi",
+      "artist": "topboy",
+      "query": "mas de ahi - topboy",
+      "titleLower": "mas de ahi",
+      "artistLower": "topboy",
+      "count": 4,
+      "lastSearchedAt": "2026-06-21T21:34:44.341Z",
+      "id": "YfgPHDg5r9Y"
+    },
+    {
+      "title": "más de ahí",
+      "artist": "TOPBOY",
+      "query": "más de ahí - TOPBOY",
+      "titleLower": "más de ahí",
+      "artistLower": "topboy",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:35:25.861Z",
+      "id": "vh7zEDySBnk"
+    },
+    {
+      "title": "un trago mas",
+      "artist": "sheider",
+      "query": "un trago mas - sheider",
+      "titleLower": "un trago mas",
+      "artistLower": "sheider",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:41:12.175Z",
+      "id": "LegQ-P2u_P0"
+    },
+    {
+      "title": "nbifbnsibfnidnfiudhnsfuhnsuifhnsofhnjksfhnjkd",
+      "artist": "",
+      "query": "nbifbnsibfnidnfiudhnsfuhnsuifhnsofhnjksfhnjkd",
+      "titleLower": "nbifbnsibfnidnfiudhnsfuhnsuifhnsofhnjksfhnjkd",
+      "artistLower": "",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:42:07.499Z",
+      "id": "KhEVSom8pCA"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

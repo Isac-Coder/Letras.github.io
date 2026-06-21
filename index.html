@@ -23,6 +23,10 @@
         <button type="submit" class="BuscarC">Buscar canciones</button>
       </form>
 
+      <div class="search-status-wrapper">
+        <div class="search-status-indicator" aria-hidden="true"></div>
+        <div id="searchStatus" role="status" aria-live="polite" class="visually-hidden">Lista vacía</div>
+      </div>
 
       <ul id="resultsList" class="results-list" aria-live="polite"></ul>
     </section>
@@ -41,6 +45,7 @@
       </div>
 
       <p id="message" class="message">Cargando interfaz...</p>
+      <p id="providerNotice" class="provider-notice hidden"></p>
       <pre id="lyricsBlock" class="pre-block">Busca una canción y haz clic en "Ver letra" para cargar la letra aquí.</pre>
 
     </section>
