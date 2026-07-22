@@ -136,14 +136,7 @@ export async function searchSongs(query, artist = '') {
       provider: 'lyricsovh'
     }));
 
-    const results = rawResults
-      .map(item => ({
-        ...item,
-        score: getSuggestionScore(normalizedQuery, item)
-      }))
-      .sort((a, b) => a.score - b.score)
-      .slice(0, SUGGESTION_LIMIT)
-      .map(({ score, ...item }) => item);
+    const results = sortSuggestions(rawResults, normalizedQuery, normalizedArtist);
 
     setCachedValue(searchCache, cacheKey, results);
     return results;
@@ -169,7 +162,7 @@ async function searchLrclib(query, artist = '') {
       return [];
     }
 
-    return data.slice(0, SUGGESTION_LIMIT).map(item => ({
+    return sortSuggestions(data.slice(0, SUGGESTION_LIMIT).map(item => ({
       id: item.id,
       artist: item.artistName || '',
       title: item.trackName || '',
@@ -181,7 +174,7 @@ async function searchLrclib(query, artist = '') {
       duration: item.duration || 0,
       plainLyrics: item.plainLyrics || '',
       syncedLyrics: item.syncedLyrics || ''
-    }));
+    })), query, artist);
   } catch (error) {
     console.warn('searchLrclib: fallo al consultar LRCLIB', error.message);
     return [];
@@ -456,17 +449,34 @@ function normalizeText(text) {
     .replace(/\s+/g, ' ');
 }
 
-function getSuggestionScore(query, song) {
+function sortSuggestions(results, query, artist = '') {
+  return results
+    .map(item => ({
+      ...item,
+      score: getSuggestionScore(query, item, artist)
+    }))
+    .sort((a, b) => a.score - b.score)
+    .slice(0, SUGGESTION_LIMIT)
+    .map(({ score, ...item }) => item);
+}
+
+function getSuggestionScore(query, song, artist = '') {
   const normalizedQuery = normalizeText(query);
   const normalizedTitle = normalizeText(song.title);
   const normalizedArtist = normalizeText(song.artist);
+  const normalizedArtistQuery = normalizeText(artist);
   const combined = normalizeText(`${song.artist} ${song.title}`);
 
   const queryDistance = computeLevenshteinDistance(normalizedQuery, combined);
   const titleDistance = computeLevenshteinDistance(normalizedQuery, normalizedTitle);
-  const artistDistance = computeLevenshteinDistance(normalizedQuery, normalizedArtist);
+  const baseScore = Math.min(queryDistance, titleDistance + 1);
 
-  return Math.min(queryDistance, titleDistance + 1, artistDistance + 1);
+  if (!normalizedArtistQuery) {
+    return baseScore;
+  }
+
+  const artistDistance = computeLevenshteinDistance(normalizedArtistQuery, normalizedArtist);
+  return artistDistance === 0 ? baseScore - 1 : baseScore + artistDistance + 1;
 }
 
 function computeLevenshteinDistance(a, b) {

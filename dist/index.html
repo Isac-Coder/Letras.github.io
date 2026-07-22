@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buscar letras de canciones</title>
+  <link rel="icon" type="image/png" href="/assets/image_1c0b736a-5fv4QeGK.png">
+  <script type="module" crossorigin src="/assets/index-CiYQZfhg.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DnOnABTe.css">
+</head>
+<body>
+  <header>
+    <h1>Buscador de letras</h1>
+    <p>Busca letras por nombre y copia el texto con timestamps sin tener que seleccionarlo manualmente.</p>
+  </header>
+
+  <main>
+    <section class="section-card search-card">
+      <form id="searchForm" class="search-bar">
+        <label for="queryInput">Nombre de la canción</label>
+        <input id="queryInput" name="query" type="search" placeholder="Azul, Shakira; X gon' give it to ya; Imagine" autocomplete="off" />
+        <label for="artistInput">Artista (opcional)</label>
+        <input id="artistInput" name="artist" type="text" placeholder="Introducir nombre del artista para refinar la búsqueda" autocomplete="off" />
+        <button type="submit" class="BuscarC">Buscar canciones</button>
+      </form>
+
+      <div class="search-status-wrapper">
+        <div class="search-status-indicator" aria-hidden="true"></div>
+        <div id="searchStatus" role="status" aria-live="polite" class="visually-hidden">Lista vacía</div>
+      </div>
+
+      <ul id="resultsList" class="results-list" aria-live="polite"></ul>
+    </section>
+
+    <section class="section-card lyrics-card">
+      <div class="result-header">
+        <div>
+          <h2 id="lyricsTitle">Sin letra cargada</h2>
+          <p id="lyricsArtist" class="meta"></p>
+          <p id="lyricsSource" class="meta"></p>
+        </div>
+        <div class="actions">
+          <button id="copyButton" class="copy" type="button" disabled>Copiar letra con timestamps</button>
+          <button id="clearButton" class="clear" type="button">Reiniciar</button>
+        </div>
+      </div>
+
+      <p id="message" class="message">Cargando interfaz...</p>
+      <p id="providerNotice" class="provider-notice hidden"></p>
+      <pre id="lyricsBlock" class="pre-block">Busca una canción y haz clic en "Ver letra" para cargar la letra aquí.</pre>
+
+    </section>
+  </main>
+  <footer>
+    <p>Busca por nombre de canción o artista. La copia usa un formato similar a <code>[00:02.02] Línea de letra</code>.</p>
+  </footer>
+
+</body>
+</html>

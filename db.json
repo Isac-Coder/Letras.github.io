@@ -119,6 +119,36 @@
       "count": 1,
       "lastSearchedAt": "2026-06-21T21:42:07.499Z",
       "id": "KhEVSom8pCA"
+    },
+    {
+      "title": "azul",
+      "artist": "",
+      "query": "azul",
+      "titleLower": "azul",
+      "artistLower": "",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:58:57.419Z",
+      "id": "7lBE90enm3c"
+    },
+    {
+      "title": "piel canel",
+      "artist": "",
+      "query": "piel canel",
+      "titleLower": "piel canel",
+      "artistLower": "",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T21:59:26.050Z",
+      "id": "b4w5q0vZMrU"
+    },
+    {
+      "title": "lonley",
+      "artist": "",
+      "query": "lonley",
+      "titleLower": "lonley",
+      "artistLower": "",
+      "count": 1,
+      "lastSearchedAt": "2026-06-21T22:12:49.109Z",
+      "id": "7P9tsFGIe7Q"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

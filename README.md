@@ -16,10 +16,10 @@ A simple local web interface for searching song lyrics and copying them with tim
 If you prefer a local web server, run this from the project folder:
 
 ```bash
-python -m http.server 5500
+npx vite
 ```
 
-Then visit `http://127.0.0.1:5500`.
+Then visit `http://127.0.0.1:5173`.
 
 ## Project structure
 
@@ -35,18 +35,13 @@ Then visit `http://127.0.0.1:5500`.
 ├───css
 │       styles.css
 │       
-├───js
-│       app.js
-│       constants.js
-│       dom.js
-│       lyricsService.js
-│       searchStorage.js
-│       ui.js
-│       
-└───server
-        README.md
-        requirements.txt
-        ytmusic_server.py
+└───js
+        app.js
+        constants.js
+        dom.js
+        lyricsService.js
+        searchStorage.js
+        ui.js
 ```
 
 ## Usage
