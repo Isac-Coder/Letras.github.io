@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import pkg from 'pg';
 
@@ -5,8 +6,14 @@ const { Pool } = pkg;
 const app = express();
 const port = process.env.PORT || 3001;
 
+const connectionString = process.env.SUPABASE_CONNECTION_STRING || process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('Falta la variable de entorno SUPABASE_CONNECTION_STRING o DATABASE_URL.');
+}
+
 const pool = new Pool({
-  connectionString: process.env.SUPABASE_CONNECTION_STRING || 'postgresql://postgres.fhqlbhwvotvxhmkbzwfn:Yosoyblaki2005.@aws-1-us-east-2.pooler.supabase.com:6543/postgres',
+  connectionString,
   ssl: { rejectUnauthorized: false }
 });
 
@@ -25,7 +32,7 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
 
-app.get('/searches', async (req, res) => {
+app.get(['/searches', '/api/searches'], async (req, res) => {
   const titleLower = (req.query.titleLower || '').toString().trim().toLowerCase();
   const artistLower = (req.query.artistLower || '').toString().trim().toLowerCase();
 
@@ -55,7 +62,7 @@ app.get('/searches', async (req, res) => {
   }
 });
 
-app.post('/searches', async (req, res) => {
+app.post(['/searches', '/api/searches'], async (req, res) => {
   const { title, artist, titleLower, artistLower, count, lastSearchedAt } = req.body;
 
   try {
@@ -88,8 +95,8 @@ app.post('/searches', async (req, res) => {
   }
 });
 
-app.patch('/searches/:id', async (req, res) => {
-  const id = Number(req.params.id);
+app.patch(['/searches', '/api/searches', '/searches/:id', '/api/searches/:id'], async (req, res) => {
+  const id = Number(req.params?.id || req.query.id || 0);
   const { count, lastSearchedAt } = req.body;
 
   if (!Number.isFinite(id)) {

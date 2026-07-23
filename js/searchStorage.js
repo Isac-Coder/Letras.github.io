@@ -1,5 +1,11 @@
 import { SEARCH_STORAGE_URL } from './constants.js';
 
+function getSearchBaseUrl() {
+  return SEARCH_STORAGE_URL.startsWith('http')
+    ? SEARCH_STORAGE_URL
+    : `${window.location.origin}${SEARCH_STORAGE_URL}`;
+}
+
 export async function recordSongSearch(song) {
   if (!SEARCH_STORAGE_URL) {
     throw new Error('SEARCH_STORAGE_URL no configurada.');
@@ -12,7 +18,8 @@ export async function recordSongSearch(song) {
   const timestamp = new Date().toISOString();
 
   const queryParams = new URLSearchParams({ titleLower, artistLower });
-  const searchUrl = `${SEARCH_STORAGE_URL}?${queryParams}`;
+  const searchBaseUrl = getSearchBaseUrl();
+  const searchUrl = `${searchBaseUrl}?${queryParams}`;
   const response = await fetch(searchUrl);
   if (!response.ok) {
     throw new Error('No se pudo leer el archivo de búsqueda.');
@@ -23,7 +30,7 @@ export async function recordSongSearch(song) {
   if (existing.length > 0) {
     const record = existing[0];
     const nextCount = (record.count || 0) + 1;
-    const patchResponse = await fetch(`${SEARCH_STORAGE_URL}/${record.id}`, {
+    const patchResponse = await fetch(`${searchBaseUrl}?id=${encodeURIComponent(record.id)}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ count: nextCount, lastSearchedAt: timestamp })
@@ -46,7 +53,7 @@ export async function recordSongSearch(song) {
     lastSearchedAt: timestamp
   };
 
-  const postResponse = await fetch(SEARCH_STORAGE_URL, {
+  const postResponse = await fetch(searchBaseUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newRecord)

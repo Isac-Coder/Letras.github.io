@@ -1,67 +1,86 @@
 # Letras.github.io
 
-A simple local web interface for searching song lyrics and copying them with timestamps.
+Aplicación web para buscar letras de canciones, ver resultados sugeridos y copiar la letra con marcas de tiempo.
 
-## Link of the deploymend page
+## Enlace de la página desplegada
 
-```
+```text
 https://isac-coder.github.io/Letras.github.io/
 ```
 
-## Overview
+## Características
 
-- Search by song title and/or artist.
-- View available song matches before loading lyrics.
-- Copy lyrics with formatted timestamps.
+- Buscar por título y/o artista.
+- Ver resultados sugeridos antes de cargar la letra.
+- Copiar la letra con formato de timestamps.
+- Guardar el historial de búsquedas en Supabase.
 
-## Getting started
+## Inicio rápido
 
-1. Clone or download this repository.
-2. Open `index.html` in your browser.
-
-If you prefer a local web server, run this from the project folder:
+1. Clona o descarga este repositorio.
+2. Instala las dependencias:
 
 ```bash
-npx vite
+npm install
 ```
 
-Then visit `http://127.0.0.1:5173`.
+3. Inicia el entorno local:
 
-## Project structure
-
-
+```bash
+npm run dev
 ```
+
+Esto levantará Vite y el servidor local encargado de guardar el historial.
+
+## Estructura del proyecto
+
+```text
 .
-│   db.json
-│   index.html
-│   LICENSE
-│   package.json
-│   README.md
-│   
-├───css
-│       styles.css
-│       
-└───js
-        app.js
-        constants.js
-        dom.js
-        lyricsService.js
-        searchStorage.js
-        ui.js
+├── api/
+│   └── searches.js          # Endpoint serverless para Vercel que guarda el historial en Supabase
+├── css/
+│   ├── styles.css          # Estilos principales de la interfaz
+│   └── _states.css         # Estilos para estados visuales
+├── js/
+│   ├── app.js              # Lógica principal de la aplicación
+│   ├── constants.js        # Configuraciones y URLs base
+│   ├── dom.js              # Referencias a elementos del DOM
+│   ├── lyricsService.js    # Consumo de APIs de letras y sugerencias
+│   ├── searchStorage.js    # Persistencia del historial de búsquedas
+│   └── ui.js               # Renderizado y manejo de la interfaz
+├── index.html              # Punto de entrada de la aplicación
+├── package.json            # Dependencias y scripts de ejecución
+├── server.js               # Servidor Express local para guardar búsquedas en Supabase
+├── vercel.json             # Configuración de despliegue en Vercel
+└── README.md               # Documentación del proyecto
 ```
 
-## Usage
+## Variables de entorno
 
-1. Enter the song title and/or artist.
-2. Click the search button.
-3. Choose a listed result.
-4. Click to view lyrics and copy if needed.
+Para que el historial funcione en Vercel o en un entorno remoto, define una de estas variables:
 
-## Notes
+```bash
+SUPABASE_CONNECTION_STRING=postgresql://usuario:password@host:puerto/base
+```
 
-- The app works with public lyrics APIs and a small local helper service when available.
-- Search metadata is stored locally for better behavior over time.
+o bien:
 
-## License
+```bash
+DATABASE_URL=postgresql://usuario:password@host:puerto/base
+```
 
-BSD 3-Clause. See [LICENSE](LICENSE).
+## Uso
+
+1. Escribe el título de la canción y/o el artista.
+2. Haz clic en buscar.
+3. Elige un resultado de la lista.
+4. Visualiza la letra y cópiala si lo necesitas.
+
+## Notas
+
+- La aplicación usa APIs públicas de letras y, cuando es posible, un servicio auxiliar para obtener mejor información.
+- El historial de búsquedas se almacena en Supabase mediante una API local o serverless.
+
+## Licencia
+
+BSD 3-Clause. Ver [LICENSE](LICENSE).
