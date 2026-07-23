@@ -60,13 +60,13 @@ Esto levantará Vite y el servidor local encargado de guardar el historial.
 Para que el historial funcione en Vercel o en un entorno remoto, define una de estas variables:
 
 ```bash
-SUPABASE_CONNECTION_STRING=postgresql://usuario:password@host:puerto/base
+SUPABASE_CONNECTION_STRING="Link de supabase"
 ```
 
 o bien:
 
 ```bash
-DATABASE_URL=postgresql://usuario:password@host:puerto/base
+DATABASE_URL="Link de supabase"
 ```
 
 ## Uso
