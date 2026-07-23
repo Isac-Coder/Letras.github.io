@@ -4,15 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"json-server db.json --port 3001\"",
+    "dev": "concurrently \"vite\" \"node server.js\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server.js"
   },
   "devDependencies": {
     "vite": "^8.0.12"
   },
   "dependencies": {
     "concurrently": "^10.0.3",
-    "json-server": "^1.0.0-beta.15"
+    "express": "^4.21.2",
+    "pg": "^8.6.2"
   }
 }
