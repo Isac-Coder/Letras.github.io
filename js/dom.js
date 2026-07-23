@@ -10,5 +10,6 @@ export const lyricsTitle = document.getElementById('lyricsTitle');
 export const lyricsArtist = document.getElementById('lyricsArtist');
 export const lyricsSource = document.getElementById('lyricsSource');
 export const lyricsBlock = document.getElementById('lyricsBlock');
+export const playButton = document.getElementById('playButton');
 export const copyButton = document.getElementById('copyButton');
 export const clearButton = document.getElementById('clearButton');

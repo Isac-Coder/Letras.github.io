@@ -203,6 +203,11 @@ body.search-state--fallback .search-bar button {
   cursor: pointer;
 }
 
+.actions button.play {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
 .actions button.copy {
   background: #22c55e;
   color: #0f172a;
@@ -310,6 +315,18 @@ body.search-state--fallback .search-bar button {
   font-size: 0.98rem;
   line-height: 1.65;
   color: #f8fafc;
+}
+
+.lyric-line {
+  padding: 0.2rem 0.45rem;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.lyric-line.current {
+  background: rgba(34, 197, 94, 0.12);
+  color: #d9f99d;
+  border-radius: 0.75rem;
+  transform: scale(1.01);
 }
 
 /* translated-block removed */

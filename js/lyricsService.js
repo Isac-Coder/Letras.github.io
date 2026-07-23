@@ -150,6 +150,56 @@ export async function searchSongs(query, artist = '') {
   }
 }
 
+export async function getSongPreview(artist, title) {
+  const normalizedArtist = (artist || '').toString().trim();
+  const normalizedTitle = (title || '').toString().trim();
+  if (!normalizedTitle) return '';
+
+  const previewFromDeezer = await getPreviewFromDeezer(normalizedArtist, normalizedTitle);
+  if (previewFromDeezer) return previewFromDeezer;
+
+  const previewFromItunes = await getPreviewFromItunes(normalizedArtist, normalizedTitle);
+  return previewFromItunes || '';
+}
+
+async function getPreviewFromDeezer(artist, title) {
+  const query = [artist, title].filter(Boolean).join(' ').trim();
+  const url = `https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=6`;
+  try {
+    const data = await fetchJsonWithRetries(url);
+    const list = (data && data.data) || [];
+    if (!list.length) return '';
+
+    const normalizedArtist = normalizeSearchText(artist);
+    const normalizedTitle = normalizeSearchText(title);
+    const exactMatch = list.find(item => item.preview && item.artist?.name && item.title && normalizeSearchText(item.artist.name) === normalizedArtist && normalizeSearchText(item.title) === normalizedTitle);
+    return (exactMatch && exactMatch.preview) || list.find(item => item.preview)?.preview || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+async function getPreviewFromItunes(artist, title) {
+  const query = [artist, title].filter(Boolean).join(' ').trim();
+  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=6`;
+  try {
+    const data = await fetchJsonWithRetries(url);
+    const list = (data && data.results) || [];
+    if (!list.length) return '';
+
+    const normalizedArtist = normalizeSearchText(artist);
+    const normalizedTitle = normalizeSearchText(title);
+    const exactMatch = list.find(item => item.previewUrl && normalizeSearchText(item.artistName) === normalizedArtist && normalizeSearchText(item.trackName) === normalizedTitle);
+    return (exactMatch && exactMatch.previewUrl) || list.find(item => item.previewUrl)?.previewUrl || '';
+  } catch (err) {
+    return '';
+  }
+}
+
+function normalizeSearchText(value) {
+  return (value || '').toString().trim().toLowerCase().replace(/[^a-z0-9áéíóúüñ]+/g, ' ');
+}
+
 async function searchLrclib(query, artist = '') {
   const params = new URLSearchParams();
   if (query) params.set('q', query);

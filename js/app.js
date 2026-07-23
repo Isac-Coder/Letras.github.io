@@ -1,5 +1,5 @@
-import { searchForm, queryInput, artistInput, clearButton, copyButton } from './dom.js';
-import { searchSongs, getLyrics } from './lyricsService.js';
+import { searchForm, queryInput, artistInput, clearButton, copyButton, playButton } from './dom.js';
+import { searchSongs, getLyrics, getSongPreview } from './lyricsService.js';
 import { recordSongSearch } from './searchStorage.js';
 import {
   renderSuggestions,
@@ -7,6 +7,7 @@ import {
   showLyrics,
   showProviderNotice,
   setCopyButtonState,
+  setPlayButtonState,
   resetUiAfterLoad,
   resetUiBeforeSearch,
   setSearchState,
@@ -17,6 +18,9 @@ import {
 
 let currentLyrics = '';
 let currentSong = null;
+let audioPlayer = null;
+let isPlayingPreview = false;
+let previewTimerId = null;
 
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
@@ -60,17 +64,13 @@ searchForm.addEventListener('submit', async event => {
       if (lyricsResult.status === 'fulfilled') {
         const lyrics = lyricsResult.value;
         currentLyrics = lyrics;
-        currentSong = { artist: artistQuery, title: query, titleShort: '', titleVersion: '' };
+        const previewSong = { artist: artistQuery, title: query, titleShort: '', titleVersion: '' };
+        const previewUrl = await getSongPreview(artistQuery, query);
+        currentSong = previewUrl ? { ...previewSong, preview: previewUrl } : previewSong;
 
         showLyrics(currentSong, lyrics, 'Original');
         resetUiAfterLoad();
-        showMessage(`Letra encontrada para "${query}" — mostrando opciones.${await getSearchCountMessage(recordPromise)}`);
-        return;
-      }
-
-      if (suggestions.length) {
-        const correctionHint = getCorrectionHint(query, artistQuery, suggestions[0]);
-        showMessage(`${correctionHint} No se encontró la letra exacta, pero hay opciones relacionadas.${await getSearchCountMessage(recordPromise)}`);
+        configurePreviewButton(currentSong);
         return;
       }
     }
@@ -117,10 +117,12 @@ async function loadLyrics(song) {
       song.plainLyrics || ''
     );
     currentLyrics = lyrics;
-    currentSong = song;
+    const previewUrl = song.preview || await getSongPreview(song.artist, song.title);
+    currentSong = previewUrl ? { ...song, preview: previewUrl } : song;
 
-    showLyrics(song, lyrics, 'Original');
+    showLyrics(currentSong, lyrics, 'Original');
     resetUiAfterLoad();
+    configurePreviewButton(currentSong);
     showMessage('Letra cargada. Usa el botón copiar para guardar la letra en el portapapeles.');
   } catch (error) {
     currentLyrics = '';
@@ -152,8 +154,18 @@ clearButton.addEventListener('click', () => {
   clearLyrics();
   queryInput.value = '';
   artistInput.value = '';
+  stopPreview();
   setSearchState(null);
   showMessage('Búsqueda reiniciada.');
+});
+
+playButton.addEventListener('click', () => {
+  if (!currentSong || !audioPlayer) return;
+  if (audioPlayer.paused) {
+    startPreview();
+  } else {
+    pausePreview();
+  }
 });
 
 function formatLyricsWithTimestamps(text) {
@@ -173,6 +185,85 @@ function clearLyrics() {
   currentSong = null;
   showLyrics({ title: 'Sin letra cargada', artist: '' }, 'Busca una canción y haz clic en "Ver letra" para cargar la letra aquí.', 'Original');
   setCopyButtonState(false);
+  setPlayButtonState(false);
+}
+
+function configurePreviewButton(song) {
+  const hasPreview = Boolean(song.preview);
+  setPlayButtonState(hasPreview);
+  if (hasPreview) {
+    if (!audioPlayer || audioPlayer.src !== song.preview) {
+      stopPreview();
+      audioPlayer = new Audio(song.preview);
+      audioPlayer.preload = 'metadata';
+      audioPlayer.addEventListener('ended', handlePreviewEnded);
+      audioPlayer.addEventListener('pause', () => {
+        isPlayingPreview = false;
+        playButton.textContent = 'Reproducir preview';
+        clearPreviewTimeout();
+      });
+      audioPlayer.addEventListener('loadedmetadata', () => {
+        if (isPlayingPreview) {
+          schedulePreviewTimeout();
+        }
+      });
+    }
+  } else {
+    stopPreview();
+  }
+}
+
+function startPreview() {
+  if (!audioPlayer) return;
+  audioPlayer.play().then(() => {
+    isPlayingPreview = true;
+    playButton.textContent = 'Pausar preview';
+    schedulePreviewTimeout();
+  }).catch(err => {
+    console.warn('No se pudo reproducir el preview:', err);
+    showMessage('No se pudo reproducir el preview de audio.');
+  });
+}
+
+function pausePreview() {
+  if (!audioPlayer) return;
+  audioPlayer.pause();
+  isPlayingPreview = false;
+  playButton.textContent = 'Reproducir preview';
+  clearPreviewTimeout();
+}
+
+function stopPreview() {
+  if (!audioPlayer) return;
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+  isPlayingPreview = false;
+  playButton.textContent = 'Reproducir preview';
+  clearPreviewTimeout();
+}
+
+function schedulePreviewTimeout() {
+  clearPreviewTimeout();
+  const maxDuration = 30;
+  const duration = Number.isFinite(audioPlayer.duration) && audioPlayer.duration > 0 ? Math.min(audioPlayer.duration, maxDuration) : maxDuration;
+  const remaining = Math.max(0, duration - audioPlayer.currentTime);
+  previewTimerId = window.setTimeout(() => {
+    stopPreview();
+  }, remaining * 1000);
+}
+
+function clearPreviewTimeout() {
+  if (previewTimerId) {
+    window.clearTimeout(previewTimerId);
+    previewTimerId = null;
+  }
+}
+
+
+function handlePreviewEnded() {
+  isPlayingPreview = false;
+  playButton.textContent = 'Reproducir preview';
+  clearPreviewTimeout();
 }
 
 function getCorrectionHint(query, artist, firstSuggestion) {

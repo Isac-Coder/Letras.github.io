@@ -8,6 +8,7 @@ import {
   lyricsArtist,
   lyricsSource,
   lyricsBlock,
+  playButton,
   copyButton
 } from './dom.js';
 
@@ -142,6 +143,11 @@ export function showLyrics(song, text, source = 'Original') {
 export function setCopyButtonState(enabled) {
   copyButton.disabled = !enabled;
 }
+
+export function setPlayButtonState(enabled) {
+  playButton.disabled = !enabled;
+}
+
 export function resetUiAfterLoad() {
   setCopyButtonState(true);
   setSearchState('success');
