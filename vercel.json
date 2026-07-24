@@ -1,4 +1,7 @@
 {
   "version": 2,
-  "cleanUrls": true
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/searches" }
+  ]
 }
