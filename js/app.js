@@ -176,9 +176,7 @@ clearButton.addEventListener('click', () => {
 if (topSongsToggleButton) {
   topSongsToggleButton.addEventListener('click', async () => {
     openTopSongsPanel();
-    if (!topSongsLoaded) {
-      await loadTopSongs();
-    }
+    await loadTopSongs();
   });
 }
 
