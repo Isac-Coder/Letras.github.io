@@ -6,6 +6,30 @@ function getSearchBaseUrl() {
     : `${window.location.origin}${SEARCH_STORAGE_URL}`;
 }
 
+function getTopSongsUrl() {
+  const baseUrl = getSearchBaseUrl().replace(/\/$/, '');
+  const normalizedBase = baseUrl.endsWith('/searches') ? baseUrl.replace(/\/searches$/, '') : baseUrl;
+
+  if (normalizedBase.endsWith('/api')) {
+    return `${normalizedBase}/searches/top`;
+  }
+
+  if (normalizedBase.endsWith('/searches')) {
+    return `${normalizedBase}/top`;
+  }
+
+  return `${normalizedBase}/searches/top`;
+}
+
+export async function fetchTopSongs() {
+  const response = await fetch(getTopSongsUrl());
+  if (!response.ok) {
+    throw new Error('No se pudo obtener la lista de canciones más escuchadas.');
+  }
+
+  return response.json();
+}
+
 export async function recordSongSearch(song) {
   if (!SEARCH_STORAGE_URL) {
     throw new Error('SEARCH_STORAGE_URL no configurada.');

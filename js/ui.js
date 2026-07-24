@@ -9,7 +9,8 @@ import {
   lyricsSource,
   lyricsBlock,
   playButton,
-  copyButton
+  copyButton,
+  topSongsList
 } from './dom.js';
 
 const stateClasses = [
@@ -111,6 +112,45 @@ export function setSearchState(state) {
 
 export function showMessage(text) {
   messageEl.textContent = text;
+}
+
+export function renderTopSongs(songs, emptyMessage = 'No hay canciones registradas aún.') {
+  if (!topSongsList) return;
+
+  topSongsList.innerHTML = '';
+
+  if (!songs?.length) {
+    const emptyItem = document.createElement('li');
+    emptyItem.className = 'top-songs-empty';
+    emptyItem.textContent = emptyMessage;
+    topSongsList.appendChild(emptyItem);
+    return;
+  }
+
+  songs.forEach((song, index) => {
+    const item = document.createElement('li');
+    item.className = 'top-songs-item';
+
+    const rank = document.createElement('span');
+    rank.className = 'top-songs-rank';
+    rank.textContent = `#${index + 1}`;
+
+    const info = document.createElement('div');
+    info.className = 'top-songs-info';
+
+    const title = document.createElement('strong');
+    title.textContent = song.title;
+
+    const count = document.createElement('span');
+    count.textContent = `${song.count ?? 0} veces`;
+
+    info.appendChild(title);
+    info.appendChild(count);
+
+    item.appendChild(rank);
+    item.appendChild(info);
+    topSongsList.appendChild(item);
+  });
 }
 
 export function showProviderNotice(text) {

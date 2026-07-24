@@ -1,8 +1,20 @@
-import { searchForm, queryInput, artistInput, clearButton, copyButton, playButton } from './dom.js';
+import {
+  searchForm,
+  queryInput,
+  artistInput,
+  clearButton,
+  copyButton,
+  playButton,
+  topSongsToggleButton,
+  topSongsPanel,
+  topSongsOverlay,
+  closeTopSongsButton
+} from './dom.js';
 import { searchSongs, getLyrics, getSongPreview } from './lyricsService.js';
-import { recordSongSearch } from './searchStorage.js';
+import { recordSongSearch, fetchTopSongs } from './searchStorage.js';
 import {
   renderSuggestions,
+  renderTopSongs,
   showMessage,
   showLyrics,
   showProviderNotice,
@@ -21,6 +33,8 @@ let currentSong = null;
 let audioPlayer = null;
 let isPlayingPreview = false;
 let previewTimerId = null;
+let topSongsLoaded = false;
+let topSongsRefreshTimer = null;
 
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
@@ -159,6 +173,29 @@ clearButton.addEventListener('click', () => {
   showMessage('Búsqueda reiniciada.');
 });
 
+if (topSongsToggleButton) {
+  topSongsToggleButton.addEventListener('click', async () => {
+    openTopSongsPanel();
+    if (!topSongsLoaded) {
+      await loadTopSongs();
+    }
+  });
+}
+
+if (closeTopSongsButton) {
+  closeTopSongsButton.addEventListener('click', closeTopSongsPanel);
+}
+
+if (topSongsOverlay) {
+  topSongsOverlay.addEventListener('click', closeTopSongsPanel);
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    closeTopSongsPanel();
+  }
+});
+
 playButton.addEventListener('click', () => {
   if (!currentSong || !audioPlayer) return;
   if (audioPlayer.paused) {
@@ -167,6 +204,68 @@ playButton.addEventListener('click', () => {
     pausePreview();
   }
 });
+
+function openTopSongsPanel() {
+  document.body.classList.add('top-songs-open');
+  if (topSongsToggleButton) {
+    topSongsToggleButton.setAttribute('aria-expanded', 'true');
+  }
+  if (topSongsPanel) {
+    topSongsPanel.setAttribute('aria-hidden', 'false');
+  }
+  if (topSongsOverlay) {
+    topSongsOverlay.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeTopSongsPanel() {
+  document.body.classList.remove('top-songs-open');
+  if (topSongsToggleButton) {
+    topSongsToggleButton.setAttribute('aria-expanded', 'false');
+  }
+  if (topSongsPanel) {
+    topSongsPanel.setAttribute('aria-hidden', 'true');
+  }
+  if (topSongsOverlay) {
+    topSongsOverlay.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function clearTopSongsRefreshTimer() {
+  if (topSongsRefreshTimer) {
+    window.clearTimeout(topSongsRefreshTimer);
+    topSongsRefreshTimer = null;
+  }
+}
+
+async function loadTopSongs() {
+  renderTopSongs([], 'Cargando canciones más escuchadas...');
+
+  try {
+    const songs = await fetchTopSongs();
+    renderTopSongs(songs);
+    topSongsLoaded = true;
+    scheduleTopSongsRefresh(songs);
+  } catch (error) {
+    console.error(error);
+    renderTopSongs([], 'No se pudieron cargar las canciones más escuchadas.');
+  }
+}
+
+function scheduleTopSongsRefresh(songs) {
+  if (topSongsRefreshTimer) {
+    window.clearTimeout(topSongsRefreshTimer);
+  }
+
+  const hasTies = songs.some((song, index) => songs.slice(index + 1).some(other => other.count === song.count));
+  if (!hasTies) {
+    return;
+  }
+
+  topSongsRefreshTimer = window.setTimeout(async () => {
+    await loadTopSongs();
+  }, 15_000);
+}
 
 function formatLyricsWithTimestamps(text) {
   const lines = text.split(/\r?\n/);
@@ -342,3 +441,5 @@ window.addEventListener('DOMContentLoaded', () => {
   clearLyrics();
   showMessage('Escribe una canción o nombre de artista y presiona Buscar.');
 });
+
+window.addEventListener('beforeunload', clearTopSongsRefreshTimer);

@@ -32,6 +32,32 @@ app.get('/health', (_req, res) => {
   res.json({ ok: true });
 });
 
+app.get(['/searches/top', '/api/searches/top'], async (_req, res) => {
+  try {
+    const query = `
+      select titulo, artista, n_reproducciones, lastsearchedat
+      from public.canciones
+      where (coalesce(trim(titulo), '') <> ''
+         or coalesce(trim(artista), '') <> '')
+         or artista is null
+         or lower(coalesce(artista, '')) = 'empty'
+      order by coalesce(n_reproducciones, 0) desc, coalesce(lastsearchedat, '1970-01-01T00:00:00Z') desc
+    `;
+
+    const { rows } = await pool.query(query);
+    const normalized = rows.map((row, index) => ({
+      id: index + 1,
+      title: row.titulo,
+      count: row.n_reproducciones ?? 0
+    }));
+
+    res.json(normalized);
+  } catch (error) {
+    console.error('Error al consultar canciones más escuchadas:', error);
+    res.status(500).json({ error: 'No se pudo consultar el ranking.' });
+  }
+});
+
 app.get(['/searches', '/api/searches'], async (req, res) => {
   const titleLower = (req.query.titleLower || '').toString().trim().toLowerCase();
   const artistLower = (req.query.artistLower || '').toString().trim().toLowerCase();
